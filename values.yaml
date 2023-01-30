@@ -1,0 +1,172 @@
+
+#optl_config_map
+
+optl_collector_config:
+      grpc:
+            endpoint: "0.0.0.0:4317"
+      http:
+            endpoint: "0.0.0.0:4318"
+
+memory_limiter:
+        # 80% of maximum memory up to 2G
+        limit_mib: "1500"
+        # 25% of limit up to 2G
+        spike_limit_mib: "512"
+        check_interval: 5s
+jaeger:
+  endpoint: jaeger-headless:14250
+
+#optl_Deployment
+
+Replicas: 1
+
+image: otel/opentelemetry-collector:latest
+
+
+#resource for otel-collector
+resource:
+           limit:
+             cpu: "1"
+             memory: 2Gi
+           request:
+             cpu: 200m
+             memory: 400Mi
+
+ports:
+  containerPort: "4317"   #otlp grpc
+          #  - containerPort: 4318   # otlp http
+          #  - containerPort: 55679  # zpages
+          #  - containerPort: 13133  # health check
+
+
+#optl_service
+
+type: "NodePort"
+
+service_ports:
+     name1: otlp-grpc # Default endpoint for OpenTelemetry gRPC receiver.
+     port1: "4317"
+     targetPort1: "4317"
+     name2: otlp-http # Default endpoint for OpenTelemetry HTTP receiver.
+     port2: "4318"
+     targetPort2: "4318"
+  #  - name: zpages
+  #    port: 55679
+  #    protocol: TCP
+  #    targetPort: 55679
+  #  - name: health-check
+  #    port: 13133
+  #    protocol: TCP
+  #    targetPort: 13133
+     selector:
+       app: opentelemetry
+       name: optl
+
+################################################################### 
+
+#StatefulSet-jaeger all in one
+
+jaeger:
+      replicas: "1"
+      image: jaegertracing/all-in-one:latest
+      ports:
+           containerPort1: "16686"
+           containerPort2: "14250"
+           containerPort3: "4317"
+      storage: "10Gi"
+      env:
+        name1: "SPAN_STORAGE_TYPE"
+        value1: "badger"
+        name2: "COLLECTOR_OTLP_ENABLED"
+        value2: "true"
+        name3: "BADGER_EPHEMERAL"
+        value3: "false" 
+        name4: "BADGER_DIRECTORY_VALUE"
+        value4: "/badger/data"
+        name5: "BADGER_DIRECTORY_KEY"
+        value5: "/badger/key"
+# service for jaeger-headless
+
+jaeger_servie_ports:
+    port1: "16686"
+    name1: web
+    port2: "14250"
+    name2: optl-connection
+    port3: "4317"
+    name3: grpc
+
+
+#service for jaeger-query
+
+jaeger_query_ports:
+      name: query-http
+      port: "16686"
+      type: NodePort
+
+
+
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 80
+
+ingress:
+  name: jaeger-query
+  enabled: true
+  className: ngnix
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: "*"
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+affinity: {}

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: optl
+ namespace: opentelemetry
+ labels:
+   {{- include "badal label" . | nindent 3 }}
+spec:
+ selector:
+   matchLabels:
+     {{- include "badal label" . | nindent 5 }}
+ minReadySeconds: 5
+ replicas: 1
+ template:
+   metadata:
+     name: optl
+     namespace: opentelemetry
+     labels:
+       {{- include "badal label" . | nindent 7 }}
+   spec:
+     containers:
+       - command:
+           - '/otelcol'
+           - '--config=/conf/optl-collector-config.yaml'
+         image: {{ .Values.image }}
+         name: otel-collector
+         resources:
+           limits:
+             cpu: {{ .Values.resource.limit.cpu }}
+             memory: {{ .Values.resource.limit.memory  }}
+           requests:
+             cpu: {{ .Values.resource.request.cpu  }}
+             memory: {{ .Values.resource.request.memory }}
+         ports:
+           - containerPort: {{ .Values.ports.containerPort }}   #otlp grpc  4317
+          #  - containerPort: 4318   # otlp http
+          #  - containerPort: 55679  # zpages
+          #  - containerPort: 13133  # health check
+         volumeMounts:
+           - name: optl-collector-config-vol
+             mountPath: /conf
+     volumes:
+       - configMap:
+           name: optl-collector-config
+           items:
+             - key: optl-collector-config
+               path: optl-collector-config.yaml
+         name: optl-collector-config-vol
