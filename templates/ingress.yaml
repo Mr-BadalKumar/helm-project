@@ -15,9 +15,9 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ .Release.Name }}-{{ $fullName }}
   labels:
-    {{- include "devtron-project.labels" . | nindent 4 }}
+    {{- include "jaeger-all-in-one-opentelemetry.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

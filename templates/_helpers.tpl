@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "devtron-project.name" -}}
+{{- define "jaeger-all-in-one-opentelemetry.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "devtron-project.fullname" -}}
+{{- define "jaeger-all-in-one-opentelemetry.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -22,6 +22,11 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 {{- end }}
+
+
+
+
+
 
 
 
@@ -38,22 +43,35 @@ name: jaeger
 {{- end}}
 
 
+{{- define "optl-label" -}}
+app: opentelemetry
+component: optl-collector-config
+{{- end}}
+
+
+
+
+
+
+
+
+
 
 
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "devtron-project.chart" -}}
+{{- define "jaeger-all-in-one-opentelemetry.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "devtron-project.labels" -}}
-helm.sh/chart: {{ include "devtron-project.chart" . }}
-{{ include "devtron-project.selectorLabels" . }}
+{{- define "jaeger-all-in-one-opentelemetry.labels" -}}
+helm.sh/chart: {{ include "jaeger-all-in-one-opentelemetry.chart" . }}
+{{ include "jaeger-all-in-one-opentelemetry.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -63,17 +81,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "devtron-project.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "devtron-project.name" . }}
+{{- define "jaeger-all-in-one-opentelemetry.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "jaeger-all-in-one-opentelemetry.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "devtron-project.serviceAccountName" -}}
+{{- define "jaeger-all-in-one-opentelemetry.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "devtron-project.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "jaeger-all-in-one-opentelemetry.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
