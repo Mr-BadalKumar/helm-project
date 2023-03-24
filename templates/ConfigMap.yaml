@@ -11,17 +11,17 @@ data:
       otlp:
         protocols:
           grpc:
-            endpoint: {{ .Values.optl_collector_config.grpc.endpoint | nindent 12 }}
+            endpoint: {{ .Values.optl_collector_config.grpc.endpoint | indent 12 }}
           http:
-            endpoint: {{ .Values.optl_collector_config.http.endpoint | nindent 12 }}
+            endpoint: {{ .Values.optl_collector_config.http.endpoint | indent 12 }}
     processors:
       batch:
       memory_limiter:
         # 80% of maximum memory up to 2G
-        limit_mib: {{ .Values.optl_collector_config.memory_limiter.limit_mib | nindent 8 }}
+        limit_mib: {{ .Values.optl_collector_config.memory_limiter.limit_mib | indent 8 }}
         # 25% of limit up to 2G
-        spike_limit_mib: {{ .Values.optl_collector_config.memory_limiter.spike_limit_mib | nindent 8 }}
-        check_interval: {{ .Values.optl_collector_config.memory_limiter.check_interval | nindent 8 }}
+        spike_limit_mib: {{ .Values.optl_collector_config.memory_limiter.spike_limit_mib | indent 8 }}
+        check_interval: {{ .Values.optl_collector_config.memory_limiter.check_interval | indent 8 }}
     extensions:
       zpages: {}
       memory_ballast:
