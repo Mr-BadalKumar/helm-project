@@ -20,9 +20,9 @@ spec:
        - image: {{ .Values.jaeger.image  }}
          name: jaeger
          ports:
-          - containerPort: {{ .Values.jaeger.ports.containerPorts1 }}
-          - containerPort: {{ .Values.jaeger.ports.containerPorts2 }}
-          - containerPort: {{ .Values.jaeger.ports.containerPorts3 }}
+          - containerPort: {{ .Values.jaeger.ports.containerPort1 }}
+          - containerPort: {{ .Values.jaeger.ports.containerPort2 }}
+          - containerPort: {{ .Values.jaeger.ports.containerPort3 }}
          env:
          - name:  {{ .Values.jaeger.env.name1 }}
            value: {{ .Values.jaeger.env.value1 }}
