@@ -1,6 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := .Values.ingress.service.name  -}}
-{{- $svcPort := .Values.ingress.service.port -}}
+{{- $svcPort := .Values.jaeger_query_ports.port -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
@@ -32,7 +31,8 @@ spec:
   tls:
     {{ toYaml .Values.ingress.tls | nindent 4 }}
   {{- end -}}
-  rules:
+  {{- if or .Values.ingress.hosts .Values.ingress.path }}
+  rules: 
   {{- range .Values.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
@@ -45,11 +45,12 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ .Release.Name }}-jaeger-query 
                 port:
                   number: {{ $svcPort }}
               {{- else }}
-              serviceName: {{ $fullName }}
+              serviceName: {{ .Release.Name }}-jaeger-query 
               servicePort: {{ $svcPort }}
               {{- end }}
             {{- end }}
+{{- end}}

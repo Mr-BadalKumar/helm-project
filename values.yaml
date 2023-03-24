@@ -122,10 +122,9 @@ ingress:
   labels: {}
   annotations: {}
   hosts:
-    - host: "*"
+    - host: "foo.bar.com"
       pathType: "ImplementationSpecific"
-      paths:
-        - /example1
+      paths: "/"
   tls: 
     #- secretName: chart-example-tls
     #  hosts:
