@@ -20,7 +20,7 @@ optl_collector_config:
           endpoint: jaeger-headless:14250
           insecure: true
     service:
-          extensions: [zpages, memory_ballast]
+          extensions: [] #[zpages, memory_ballast]
           pipelines:
               receivers: [otlp]
               processors: [memory_limiter, batch]
