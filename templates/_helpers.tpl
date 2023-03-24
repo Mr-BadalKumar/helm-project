@@ -25,11 +25,6 @@ If release name contains chart name it will be used as a full name.
 
 
 
-
-
-
-
-
 {{- define "deployment-optl label" -}}
 name: optl
 app: opentelemetry
@@ -47,15 +42,6 @@ name: jaeger
 app: opentelemetry
 component: optl-collector-config
 {{- end}}
-
-
-
-
-
-
-
-
-
 
 
 

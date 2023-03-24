@@ -6,38 +6,4 @@ metadata:
   labels:
    {{- include "optl-label" . | nindent 3 }}
 data:
-  optl-collector-config: |
-    receivers:
-      otlp:
-        protocols:
-          grpc:
-            endpoint: {{ .Values.optl_collector_config.grpc.endpoint | indent 12 }}
-          http:
-            endpoint: {{ .Values.optl_collector_config.http.endpoint | indent 12 }}
-    processors:
-      batch:
-      memory_limiter:
-        # 80% of maximum memory up to 2G
-        limit_mib: {{ .Values.optl_collector_config.memory_limiter.limit_mib | indent 8 }}
-        # 25% of limit up to 2G
-        spike_limit_mib: {{ .Values.optl_collector_config.memory_limiter.spike_limit_mib | indent 8 }}
-        check_interval: {{ .Values.optl_collector_config.memory_limiter.check_interval | indent 8 }}
-    extensions:
-      zpages: {}
-      memory_ballast:
-        # Memory Ballast size should be max 1/3 to 1/2 of memory.
-        size_mib: {{ .Values.optl_collector_config.memory_ballast.size_mib }}
-    exporters:
-      logging:
-        loglevel: {{ .Values.optl_collector_config.exporters.loglevel  }}
-      jaeger:
-        endpoint: {{ .Values.optl_collector_config.jaeger.endpoint  }}
-        tls:
-          insecure:  {{ .Values.optl_collector_config.jaeger.insecure  }}
-    service:
-      extensions: {{ .Values.optl_collector_config.service.extensions  }}
-      pipelines:
-        traces/1:
-          receivers: {{ .Values.optl_collector_config.service.pipelines.receivers }}
-          processors: {{ .Values.optl_collector_config.service.pipelines.processors  }}
-          exporters: {{ .Values.optl_collector_config.service.pipelines.exporters  }}
+  optl-collector-config: {{toYaml .Values.optl_collector_config | indent  4}}

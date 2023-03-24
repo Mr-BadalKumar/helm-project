@@ -1,30 +1,40 @@
 #config_map
-optl_collector_config:
-    name: optl-collector-config
-    grpc:
-        endpoint: "0.0.0.0:4317"
-    http:
-        endpoint: "0.0.0.0:4318"
-    memory_limiter:
-          # 80% of maximum memory up to 2G
-          limit_mib: "1500"
-          # 25% of limit up to 2G
-          spike_limit_mib: "512"
-          check_interval: 5s
-    memory_ballast:
-      # Memory Ballast size should be max 1/3 to 1/2 of memory.
-          size_mib: 683
+optl_collector_config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
+    processors:
+      batch:
+      memory_limiter:
+        # 80% of maximum memory up to 2G
+        limit_mib: 1500
+        # 25% of limit up to 2G
+        spike_limit_mib: 512
+        check_interval: 5s
+    extensions:
+      zpages: {}
+      memory_ballast:
+        # Memory Ballast size should be max 1/3 to 1/2 of memory.
+        size_mib: 683
     exporters:
-          loglevel: info
-    jaeger:
-          endpoint: jaeger-headless:14250
+      logging:
+        loglevel: info
+      jaeger:
+        endpoint: jaeger-headless.opentelemetry:14250
+        tls:
           insecure: true
     service:
-          extensions: [] #[zpages, memory_ballast]
-          pipelines:
-              receivers: [otlp]
-              processors: [memory_limiter, batch]
-              exporters: [logging, jaeger]          
+      extensions: [zpages, memory_ballast]
+      pipelines:
+        traces/1:
+          receivers: [otlp]
+          #processors: [memory_limiter, batch]
+          exporters: [logging, jaeger]
+
 
 #optl_Deployment
 Deployment:
@@ -45,7 +55,7 @@ Deployment:
 
 #optl_service
 optl_service_ports:
-     type: "NodePort"
+     type: "ClusterIP"
      name1: otlp-grpc # Default endpoint for OpenTelemetry gRPC receiver.
      port1: "4317"
      targetPort1: "4317"
@@ -77,7 +87,7 @@ jaeger_servie_ports:
 jaeger_query_ports:
       name: query-http
       port: "16686"
-      type: NodePort
+      type: "ClusterIP"
 
 #StatefulSet-jaeger all in one
 jaeger:
