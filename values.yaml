@@ -117,12 +117,19 @@ service:
 
 ingress:
   name: jaeger-query
-  enabled: false
-  className: ngnix
+  enabled: true
+  className: ""
+  labels: {}
   annotations: {}
   hosts:
     - host: "*"
+      pathType: "ImplementationSpecific"
       paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
+        - /example1
+  tls: 
+    #- secretName: chart-example-tls
+    #  hosts:
+      #  - chart-example.local
+  service:
+    name:
+    port:
