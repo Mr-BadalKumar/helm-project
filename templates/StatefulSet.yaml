@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
  name: {{ .Release.Name }}-jaeger-all-in-one
- namespace: {{ .Release.Name }}-opentelemetry
+ namespace: opentelemetry
  labels:
    {{- include "stateful label" . | nindent 3 }}
 spec: 
@@ -20,9 +20,9 @@ spec:
        - image: {{ .Values.jaeger.image  }}
          name: jaeger
          ports:
-          - containerPort: {{ default  16686 .Values.jaeger.ports.containerPorts1 }}
-          - containerPort: {{ default  14250 .Values.jaeger.ports.containerPorts2 }}
-          - containerPort: {{ default  4317  .Values.jaeger.ports.containerPorts3 }}
+          - containerPort: {{ .Values.jaeger.ports.containerPorts1 }}
+          - containerPort: {{ .Values.jaeger.ports.containerPorts2 }}
+          - containerPort: {{ .Values.jaeger.ports.containerPorts3 }}
          env:
          - name:  {{ .Values.jaeger.env.name1 }}
            value: {{ .Values.jaeger.env.value1 }}

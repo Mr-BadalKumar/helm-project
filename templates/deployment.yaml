@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
  name: {{ .Release.Name }}-optl-deployment
- namespace: {{ .Release.Name }}-opentelemetry
+ namespace: opentelemetry
  labels:
-   {{- include "badal label" . | nindent 3 }}
+   {{- include "deployment-optl label" . | nindent 3 }}
 spec:
  selector:
    matchLabels:
-     {{- include "badal label" . | nindent 5 }}
+     {{- include "deployment-optl label" . | nindent 5 }}
  minReadySeconds: 5
  replicas: {{ .Values.Deployment.Replicas }}
  template:
    metadata:
      name: {{ .Release.Name }}-optl
-     namespace: {{ .Release.Name }}-opentelemetry
+     namespace: opentelemetry
      labels:
-       {{- include "badal label" . | nindent 7 }}
+       {{- include "deployment-optl label" . | nindent 7 }}
    spec:
      containers:
        - command:

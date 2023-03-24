@@ -30,7 +30,7 @@ If release name contains chart name it will be used as a full name.
 
 
 
-{{- define "badal label" -}}
+{{- define "deployment-optl label" -}}
 name: optl
 app: opentelemetry
 component: optl-collector

@@ -49,9 +49,9 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name:  {{ .Values.jaeger_query_ports.name }}
                 port:
-                  number: {{ $svcPort }}
+                  number: {{ .Values.jaeger_query_ports.port }}
               {{- else }}
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
