@@ -22,7 +22,7 @@ spec:
        - command:
            - '/otelcol'
            - '--config=/conf/optl-collector-config.yaml'
-         image: {{ .Values.image }}
+         image: {{ .Values.Deployment.image }}
          name: otel-collector
          resources:
            limits:
